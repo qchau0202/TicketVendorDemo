@@ -1,0 +1,206 @@
+﻿@{
+    ViewBag.Title = "Xác nhận đặt vé";
+    var train = ViewBag.Train as ticket_vendor_demo.Models.Train;
+    var passenger = ViewBag.Passenger as ticket_vendor_demo.Models.Passenger;
+    string seatNumber = ViewBag.SeatNumber;
+}
+
+<style>
+    .content-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        margin-bottom: 30px;
+        padding: 30px 20px;
+        background-color: #f4f6f9;
+    }
+
+    .confirm-title {
+        font-size: 24px;
+        font-weight: 600;
+        color: #007bff;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    .confirm-card {
+        background-color: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        padding: 25px;
+        margin-bottom: 20px;
+        transition: box-shadow 0.3s ease;
+    }
+
+        .confirm-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+    .card-title {
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: #007bff;
+        margin-bottom: 20px;
+        border-bottom: 1px solid #e9ecef;
+        padding-bottom: 10px;
+    }
+
+    .card-text {
+        font-size: 14px;
+        color: #333;
+        margin-bottom: 12px;
+        line-height: 1.5;
+    }
+
+        .card-text strong {
+            color: #555;
+        }
+
+    .timeline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 20px 0;
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-radius: 8px;
+    }
+
+    .station {
+        text-align: left;
+        font-size: 13px;
+        line-height: 1.4;
+        color: #6c757d;
+    }
+
+        .station strong {
+            color: #333;
+            font-weight: 500;
+        }
+
+    .arrow {
+        flex: 1;
+        height: 2px;
+        background: #007bff;
+        position: relative;
+        margin: 0 20px;
+    }
+
+        .arrow .duration {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            background: #fff;
+            padding: 0 8px;
+            color: #007bff;
+            border: 1px solid #007bff;
+            border-radius: 12px;
+        }
+
+    .btn-action {
+        font-size: 0.9rem;
+        padding: 10px 20px;
+        border-radius: 6px;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-success {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+        .btn-success:hover {
+            background-color: #218838;
+            border-color: #1e7e34;
+        }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+    .icon {
+        margin-right: 5px;
+    }
+</style>
+
+<div class="content-container">
+    <h2 class="confirm-title">Xác nhận đặt vé</h2>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    @if (train != null && passenger != null)
+    {
+        // Tính thời gian hành trình
+        TimeSpan departureTime = TimeSpan.Parse(train.DepartureTime);
+        TimeSpan arrivalTime = TimeSpan.Parse(train.ArrivalTime);
+        TimeSpan duration = arrivalTime - departureTime;
+        string durationText;
+        if (duration < TimeSpan.Zero)
+        {
+            duration += TimeSpan.FromDays(1);
+        }
+        durationText = $"{duration.Hours} giờ";
+        if (duration.Minutes > 0)
+        {
+            durationText += $" {duration.Minutes} phút";
+        }
+
+        <div class="confirm-card">
+            <h5 class="card-title">Thông tin chuyến tàu</h5>
+            <p class="card-text"><strong>Chuyến tàu:</strong> @train.TrainName (@train.TrainNumber)</p>
+            <div class="timeline">
+                <div class="station">
+                    <strong>@train.DepartureStation</strong><br />
+                    @train.TravelDate<br />
+                    @train.DepartureTime
+                </div>
+                <div class="arrow">
+                    <span class="duration">@durationText</span>
+                </div>
+                <div class="station">
+                    <strong>@train.ArrivalStation</strong><br />
+                    @train.TravelDate<br />
+                    @train.ArrivalTime
+                </div>
+            </div>
+            <p class="card-text"><strong>Loại vé:</strong> @train.TicketType</p>
+            <p class="card-text"><strong>Giá vé:</strong> @train.Price.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</p>
+            <p class="card-text"><strong>Ghế:</strong> @seatNumber</p>
+        </div>
+
+        <div class="confirm-card">
+            <h5 class="card-title">Thông tin khách</h5>
+            <p class="card-text"><strong>Họ và tên:</strong> @passenger.FullName</p>
+            <p class="card-text"><strong>Số điện thoại:</strong> @passenger.PhoneNumber</p>
+            <p class="card-text"><strong>Email:</strong> @(passenger.Email ?? "Không có")</p>
+            <p class="card-text"><strong>Loại khách:</strong> @(passenger.IsGuest ? "Khách vãng lai" : "Đã đăng ký")</p>
+        </div>
+
+        <form method="post" action="@Url.Action("ProcessPayment", "Payment")">
+            <div class="text-center">
+                <button type="submit" class="btn btn-success btn-action">
+                    <i class="bi bi-check-circle icon"></i> Xác nhận và Thanh toán
+                </button>
+                <a href="@Url.Action("Index", "Train")" class="btn btn-secondary btn-action">
+                    <i class="bi bi-arrow-left-circle icon"></i> Quay lại
+                </a>
+            </div>
+        </form>
+    }
+    else
+    {
+        <p class="text-center text-muted">Không tìm thấy thông tin để xác nhận.</p>
+    }
+</div>

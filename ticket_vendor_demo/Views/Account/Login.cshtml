@@ -1,0 +1,77 @@
+﻿@{
+    ViewBag.Title = "Đăng nhập";
+}
+
+<style>
+    .login-form {
+        max-width: 400px;
+        margin: 0 auto;
+        padding: 20px;
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background-color: #fff;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #007bff;
+    }
+
+    .form-control {
+        border-radius: 5px;
+    }
+
+    .btn-action {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    .icon {
+        margin-right: 5px;
+    }
+
+    .register-link {
+        font-size: 0.9rem;
+        color: #007bff;
+    }
+
+        .register-link:hover {
+            text-decoration: underline;
+        }
+</style>
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Đăng nhập</h2>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <div class="login-form">
+        <form method="post" action="@Url.Action("Login", "Account")">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email <span class="text-danger">*</span></label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Mật khẩu <span class="text-danger">*</span></label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-action">
+                    <i class="bi bi-box-arrow-in-right icon"></i> Đăng nhập
+                </button>
+                <a href="@Url.Action("PassengerInfo", "Booking")" class="btn btn-secondary btn-action">
+                    <i class="bi bi-arrow-left-circle icon"></i> Quay lại
+                </a>
+            </div>
+            <div class="text-center mt-3">
+                <p>Chưa có tài khoản? <a href="@Url.Action("Register", "Account")" class="register-link">Đăng ký ngay</a></p>
+            </div>
+        </form>
+    </div>
+</div>

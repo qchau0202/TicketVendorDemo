@@ -1,0 +1,146 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Ticket Vendor Demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Lexend', sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .container {
+            flex: 1 0 auto;
+        }
+
+        .navbar {
+            background-color: #007bff;
+            padding: 1rem 2rem;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #fff !important;
+        }
+
+            .navbar-brand img {
+                height: 40px;
+                margin-right: 10px;
+            }
+
+        .nav-link {
+            color: #fff !important;
+            font-weight: 400;
+            margin-right: 15px;
+        }
+
+            .nav-link:hover {
+                color: #e0e0e0 !important;
+            }
+
+        .navbar-toggler {
+            border-color: #fff;
+        }
+
+        footer {
+            background-color: #007bff;
+            color: #fff;
+            padding: 3rem 0;
+            flex-shrink: 0;
+        }
+
+            footer a {
+                color: #e0e0e0;
+                text-decoration: none;
+            }
+
+                footer a:hover {
+                    color: #fff;
+                    text-decoration: underline;
+                }
+
+            footer .footer-links, footer .footer-contact {
+                margin-bottom: 1rem;
+            }
+
+                footer .footer-links a {
+                    margin: 0 15px;
+                }
+
+            footer .social-icons a {
+                font-size: 1.5rem;
+                margin: 0 10px;
+            }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="@Url.Action("Index", "Home")">
+                Ticket Vendor
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("Index", "Train")">Xem Chuyến Tàu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="@Url.Action("DisplayData", "Home")">Hiển Thị Dữ Liệu</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Đăng Nhập / Đăng Ký</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        @RenderBody()
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="text-center footer-links">
+                <a href="#">Về Chúng Tôi</a>
+                <a href="#">Chính Sách Bảo Mật</a>
+                <a href="#">Điều Khoản Sử Dụng</a>
+                <a href="#">Liên Hệ</a>
+            </div>
+            <div class="text-center footer-contact">
+                <p>Email: support@ticketvendor.com | Hotline: 1900 1234</p>
+            </div>
+            <div class="text-center social-icons">
+                <a href="#"><i class="bi bi-facebook"></i></a>
+                <a href="#"><i class="bi bi-instagram"></i></a>
+                <a href="#"><i class="bi bi-twitter-x"></i></a>
+            </div>
+            <div class="text-center mt-3">
+                <p>© 2025 Ticket Vendor. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+    @RenderSection("scripts", required: false)
+</body>
+</html>

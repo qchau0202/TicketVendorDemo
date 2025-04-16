@@ -1,0 +1,291 @@
+﻿@{
+    ViewBag.Title = "Đặt vé thành công";
+    var train = ViewBag.Train as ticket_vendor_demo.Models.Train;
+    var passenger = ViewBag.Passenger as ticket_vendor_demo.Models.Passenger;
+    string seatNumber = ViewBag.SeatNumber;
+    string qrCodeData = ViewBag.QRCodeData;
+}
+
+<style>
+    .content-container {
+        max-width: 1000px;
+        margin: 0 auto;
+        margin-bottom: 30px;
+        padding: 30px 20px;
+        background-color: #f4f6f9;
+    }
+
+    .success-container {
+        text-align: center;
+        margin-bottom: 30px;
+        background-color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .success-icon {
+        font-size: 60px;
+        color: #28a745;
+    }
+
+    .success-message {
+        font-size: 24px;
+        font-weight: 600;
+        margin-top: 10px;
+        color: #28a745;
+    }
+
+    .sub-message {
+        font-size: 14px;
+        color: #6c757d;
+        margin-top: 5px;
+    }
+
+    .ticket-details {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+        background-color: #fff;
+        border-radius: 16px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        padding: 30px;
+        margin-bottom: 20px;
+    }
+
+    .ticket-info {
+        flex: 3;
+        font-size: 14px;
+        color: #333;
+    }
+
+        .ticket-info p {
+            margin-bottom: 10px;
+        }
+
+        .ticket-info h6 {
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            color: #666;
+        }
+
+    .timeline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 20px 0;
+    }
+
+    .station {
+        text-align: left;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .arrow {
+        flex: 1;
+        height: 1px;
+        background: #ccc;
+        position: relative;
+        margin: 0 20px;
+    }
+
+        .arrow .duration {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 12px;
+            background: #fff;
+            padding: 0 6px;
+            color: #888;
+        }
+
+    .qr-code-section {
+        flex: 1.2;
+        text-align: center;
+        border-left: 1px dashed #ccc;
+        padding-left: 30px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+        .qr-code-section img {
+            width: 140px;
+            height: 140px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+        }
+
+        .qr-code-section p {
+            font-size: 12px;
+            color: #6c757d;
+            margin-bottom: 15px;
+        }
+
+    .action-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: stretch;
+    }
+
+        .action-buttons .btn {
+            font-size: 13px;
+            padding: 10px;
+            border-radius: 6px;
+            font-weight: 500;
+            transition: background-color 0.3s ease;
+        }
+
+    .btn-primary {
+        background-color: #007bff;
+        color: white;
+        border: none;
+    }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+
+    .btn-outline-primary {
+        background: transparent;
+        color: #007bff;
+        border: 1px solid #007bff;
+    }
+
+        .btn-outline-primary:hover {
+            background-color: #e9ecef;
+        }
+
+    .total-fare {
+        font-size: 16px;
+        font-weight: 600;
+        color: #111;
+        margin-top: 20px;
+    }
+
+    .footer-links {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+        .footer-links a {
+            font-size: 12px;
+            color: #6c757d;
+            margin: 0 10px;
+            text-decoration: none;
+        }
+
+            .footer-links a:hover {
+                color: #007bff;
+                text-decoration: underline;
+            }
+
+    .icon {
+        margin-right: 5px;
+    }
+</style>
+
+<div class="content-container">
+    <div class="success-container">
+        <i class="bi bi-check-circle success-icon"></i>
+        <div class="success-message">Chúc mừng! Bạn đã đặt vé thành công</div>
+        <p class="sub-message">Vui lòng mang theo ERS/VRM/SMS/Mail cùng giấy tờ tùy thân hợp lệ khi đi lại</p>
+    </div>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">@ViewBag.ErrorMessage</div>
+    }
+
+    @if (train != null && passenger != null)
+    {
+        // Tính thời gian hành trình
+        TimeSpan departureTime = TimeSpan.Parse(train.DepartureTime);
+        TimeSpan arrivalTime = TimeSpan.Parse(train.ArrivalTime);
+        TimeSpan duration = arrivalTime - departureTime;
+        string durationText;
+        if (duration < TimeSpan.Zero)
+        {
+            duration += TimeSpan.FromDays(1);
+        }
+        durationText = $"{duration.Hours} giờ";
+        if (duration.Minutes > 0)
+        {
+            durationText += $" {duration.Minutes} phút";
+        }
+
+        <div class="ticket-details">
+            <!-- Left Side: Ticket Info -->
+            <div class="ticket-info">
+                <p><strong>PNR SỐ:</strong> @ViewBag.TicketID <span style="float:right;"><strong>Transaction ID:</strong> @ViewBag.TicketID</span></p>
+                <hr />
+                <p><strong>@train.TrainNumber - @train.TrainName</strong></p>
+                <div class="timeline">
+                    <div class="station">
+                        @train.TravelDate<br />
+                        @train.DepartureTime<br />
+                        @train.DepartureStation
+                    </div>
+                    <div class="arrow">
+                        <span class="duration">@durationText</span>
+                    </div>
+                    <div class="station">
+                        @train.TravelDate<br />
+                        @train.ArrivalTime<br />
+                        @train.ArrivalStation
+                    </div>
+                </div>
+                @if (!string.IsNullOrEmpty(passenger.Email))
+                {
+                    <p><strong>E-Ticket đã được gửi đến:</strong> @passenger.Email</p>
+                }
+                <hr />
+                <h6>Thông tin hành khách</h6>
+                <p><strong>@passenger.FullName</strong></p>
+                <p><strong>Tuổi:</strong> 24 tuổi</p>
+                <p><strong>Giới tính:</strong> Nam/Nữ</p>
+                <p><strong>Trạng thái:</strong> Confirmed (CNF)</p>
+                <p><strong>Chỗ ngồi:</strong> @seatNumber</p>
+                <p class="total-fare">Tổng tiền: @train.Price.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</p>
+            </div>
+
+            <!-- Right Side: QR Code -->
+            <div class="qr-code-section">
+                <div>
+                     <img src="https://placehold.co/300x300" alt="QR Code Placeholder" />
+                    <p>Quét mã để xem vé trên thiết bị khác</p>
+                </div>
+                <div class="action-buttons">
+                    <a href="#" class="btn btn-outline-primary">
+                        <i class="bi bi-printer icon"></i> Print ticket (Tiếng Anh)
+                    </a>
+                    <a href="#" class="btn btn-outline-primary">
+                        <i class="bi bi-printer icon"></i> In vé (Tiếng Việt)
+                    </a>
+                    <a href="@Url.Action("Index", "Train")" class="btn btn-primary">
+                        <i class="bi bi-ticket-perforated icon"></i> Đặt vé khác
+                    </a>
+                    <a href="#" class="btn btn-primary">
+                        <i class="bi bi-download icon"></i> Tải vé về
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-links">
+            <a href="#">Chính sách hủy vé</a>
+            <a href="#">Điều khoản sử dụng</a>
+            <a href="#">Bảo hiểm hành trình</a>
+        </div>
+    }
+    else
+    {
+        <p class="text-center text-muted">Không có thông tin đặt vé.</p>
+    }
+</div>

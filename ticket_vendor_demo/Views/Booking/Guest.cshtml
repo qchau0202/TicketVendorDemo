@@ -1,0 +1,69 @@
+﻿@{
+    ViewBag.Title = "Nhập thông tin khách";
+}
+
+<style>
+    .guest-form {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 20px;
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        background-color: #fff;
+    }
+
+    .form-label {
+        font-weight: 500;
+        color: #007bff;
+    }
+
+    .form-control {
+        border-radius: 5px;
+    }
+
+    .btn-action {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    .icon {
+        margin-right: 5px;
+    }
+</style>
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Nhập thông tin khách</h2>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <div class="guest-form">
+        <form method="post" action="@Url.Action("Guest", "Booking")">
+            <div class="mb-3">
+                <label for="fullName" class="form-label">Họ và tên <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="fullName" name="fullName" required>
+            </div>
+            <div class="mb-3">
+                <label for="phoneNumber" class="form-label">Số điện thoại <span class="text-danger">*</span></label>
+                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
+            </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email (Tùy chọn)</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-action">
+                    <i class="bi bi-arrow-right-circle icon"></i> Tiếp tục
+                </button>
+                <a href="@Url.Action("PassengerInfo", "Booking")" class="btn btn-secondary btn-action">
+                    <i class="bi bi-arrow-left-circle icon"></i> Quay lại
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

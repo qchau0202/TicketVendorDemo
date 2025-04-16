@@ -1,0 +1,223 @@
+﻿@model List<ticket_vendor_demo.Models.Train>
+
+@{
+    ViewBag.Title = "Danh sách chuyến tàu";
+}
+
+<style>
+    .train-card {
+        transition: transform 0.2s;
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+        .train-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .card-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .train-title {
+        font-size: 1.25rem;
+        font-weight: 500;
+        color: #007bff;
+        margin: 0;
+    }
+
+    .train-frequency {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .timeline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .station {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .station-time {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .arrow {
+        flex: 1;
+        border-bottom: 1px solid #ccc;
+        margin: 0 10px;
+        position: relative;
+        text-align: center;
+    }
+
+    .duration {
+        font-size: 0.85rem;
+        color: #6c757d;
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .seats-info {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+
+    .seat-type {
+        background-color: #e9ecef;
+        padding: 5px 10px;
+        border-radius: 5px;
+        font-size: 0.85rem;
+    }
+
+    .seat-available {
+        background-color: #28a745;
+        color: #fff;
+    }
+
+    .seat-not-available {
+        background-color: #dc3545;
+        color: #fff;
+    }
+
+    .btn-action {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    .icon {
+        margin-right: 5px;
+    }
+
+    .filter-section {
+        background-color: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin-bottom: 30px;
+    }
+</style>
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Danh sách chuyến tàu</h2>
+
+    <!-- Thanh tìm kiếm và bộ lọc -->
+    <div class="filter-section">
+        <form method="get" action="@Url.Action("Index", "Train")">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <input type="text" name="search" class="form-control" placeholder="Tìm kiếm số hiệu hoặc tên tàu..." value="@(ViewBag.Search ?? "")">
+                </div>
+                <div class="col-md-2">
+                    <select name="departureStation" class="form-select">
+                        <option value="">Điểm khởi hành</option>
+                        <option value="HCM, Ho Chi Minh City">HCM, Ho Chi Minh City</option>
+                        <option value="HN, Ha Noi">HN, Ha Noi</option>
+                        <option value="DN, Da Nang">DN, Da Nang</option>
+                        <option value="HP, Hai Phong">HP, Hai Phong</option>
+                        <option value="HUE, Hue">HUE, Hue</option>
+                        <option value="CT, Can Tho">CT, Can Tho</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <select name="arrivalStation" class="form-select">
+                        <option value="">Điểm đến</option>
+                        <option value="HCM, Ho Chi Minh City">HCM, Ho Chi Minh City</option>
+                        <option value="HN, Ha Noi">HN, Ha Noi</option>
+                        <option value="DN, Da Nang">DN, Da Nang</option>
+                        <option value="HP, Hai Phong">HP, Hai Phong</option>
+                        <option value="HUE, Hue">HUE, Hue</option>
+                        <option value="CT, Can Tho">CT, Can Tho</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <input type="date" name="travelDate" class="form-control" value="@(ViewBag.TravelDate ?? "")">
+                </div>
+                <div class="col-md-2">
+                    <select name="ticketType" class="form-select">
+                        <option value="">Loại vé</option>
+                        <option value="Single">Single</option>
+                        <option value="Return">Return</option>
+                    </select>
+                </div>
+                <div class="col-md-1">
+                    <button type="submit" class="btn btn-primary w-100"><i class="bi bi-search icon"></i> Lọc</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="row">
+            <div class="col-12">
+                @foreach (var train in Model)
+                {
+                    <div class="card train-card">
+                        <div class="card-header">
+                            <h5 class="train-title">@train.TrainNumber - @train.TrainName</h5>
+                            <span class="train-frequency">Chạy hàng ngày</span>
+                        </div>
+                        <div class="card-body">
+                            <div class="timeline">
+                                <div class="station">
+                                    @train.TravelDate<br />
+                                    <span class="station-time">@train.DepartureTime</span><br />
+                                    @train.DepartureStation
+                                </div>
+                                <div class="arrow">
+                                    <span class="duration">8 giờ</span>
+                                </div>
+                                <div class="station">
+                                    @train.TravelDate<br />
+                                    <span class="station-time">@train.ArrivalTime</span><br />
+                                    @train.ArrivalStation
+                                </div>
+                            </div>
+                            <div class="seats-info">
+                                <span class="seat-type seat-available">3A - Còn 046 - @train.Price.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</span>
+                                <span class="seat-type seat-available">2A - Còn 006 - @train.Price.ToString("C", new System.Globalization.CultureInfo("vi-VN"))</span>
+                                <span class="seat-type seat-not-available">1A - Hết</span>
+                                <span class="seat-type seat-not-available">WL - 38</span>
+                                <span class="seat-type seat-not-available">SL - Hết</span>
+                            </div>
+                            <a href="@Url.Action("Details", "Train", new { id = train.TrainID })" class="btn btn-primary btn-action">
+                                <i class="bi bi-eye icon"></i> Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+    else
+    {
+        <p class="text-center text-muted mt-4">Không có chuyến tàu nào.</p>
+    }
+</div>

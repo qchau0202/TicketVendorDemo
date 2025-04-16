@@ -1,0 +1,326 @@
+﻿@{
+    ViewBag.Title = "Hiển thị dữ liệu cơ sở dữ liệu";
+}
+
+<style>
+    .content-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px 20px;
+        background-color: #f4f6f9;
+        min-height: calc(100vh - 200px);
+    }
+
+    h2 {
+        font-size: 28px;
+        font-weight: 600;
+        color: #007bff;
+        text-align: center;
+        margin-bottom: 30px;
+    }
+
+    h3 {
+        font-size: 20px;
+        font-weight: 500;
+        color: #333;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        border-left: 4px solid #007bff;
+        padding-left: 10px;
+    }
+
+    .table-container {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+
+    .table {
+        margin-bottom: 0;
+        font-size: 14px;
+    }
+
+        .table thead th {
+            background-color: #007bff;
+            color: #fff;
+            font-weight: 500;
+            text-transform: uppercase;
+            border: none;
+        }
+
+        .table tbody tr {
+            transition: background-color 0.3s ease;
+        }
+
+            .table tbody tr:hover {
+                background-color: #f8f9fa;
+            }
+
+        .table tbody td {
+            vertical-align: middle;
+        }
+
+    .search-bar {
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .search-bar input {
+            width: 300px;
+            padding: 8px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+            .search-bar input:focus {
+                border-color: #007bff;
+                outline: none;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+            }
+
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+        .pagination button {
+            padding: 8px 12px;
+            margin: 0 5px;
+            border: 1px solid #007bff;
+            background-color: #fff;
+            color: #007bff;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .pagination button:hover {
+                background-color: #007bff;
+                color: #fff;
+            }
+
+            .pagination button.disabled {
+                background-color: #e9ecef;
+                color: #6c757d;
+                border-color: #e9ecef;
+                cursor: not-allowed;
+            }
+
+    .no-data {
+        text-align: center;
+        color: #6c757d;
+        font-style: italic;
+        padding: 20px;
+    }
+</style>
+
+<div class="content-container">
+    <h2>Hiển thị dữ liệu cơ sở dữ liệu</h2>
+
+    <!-- Passengers Table -->
+    <h3>Hành khách (Passengers)</h3>
+    <div class="table-container">
+        <div class="search-bar">
+            <input type="text" id="passengersSearch" placeholder="Tìm kiếm hành khách..." onkeyup="loadTable('passengers', this.value)">
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>PassengerID</th>
+                    <th>FullName</th>
+                    <th>Email</th>
+                    <th>PhoneNumber</th>
+                    <th>IsGuest</th>
+                </tr>
+            </thead>
+            <tbody id="passengersTable"></tbody>
+        </table>
+        <div class="pagination" id="passengersPagination"></div>
+    </div>
+
+    <!-- Trains Table -->
+    <h3>Chuyến tàu (Trains)</h3>
+    <div class="table-container">
+        <div class="search-bar">
+            <input type="text" id="trainsSearch" placeholder="Tìm kiếm chuyến tàu..." onkeyup="loadTable('trains', this.value)">
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>TrainID</th>
+                    <th>TrainNumber</th>
+                    <th>TrainName</th>
+                    <th>DepartureStation</th>
+                    <th>ArrivalStation</th>
+                    <th>DepartureTime</th>
+                    <th>ArrivalTime</th>
+                    <th>TravelDate</th>
+                    <th>TicketType</th>
+                    <th>Price</th>
+                </tr>
+            </thead>
+            <tbody id="trainsTable"></tbody>
+        </table>
+        <div class="pagination" id="trainsPagination"></div>
+    </div>
+
+    <!-- Tickets Table -->
+    <h3>Vé (Tickets)</h3>
+    <div class="table-container">
+        <div class="search-bar">
+            <input type="text" id="ticketsSearch" placeholder="Tìm kiếm vé..." onkeyup="loadTable('tickets', this.value)">
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>TicketID</th>
+                    <th>PassengerID</th>
+                    <th>TrainID</th>
+                    <th>SeatNumber</th>
+                </tr>
+            </thead>
+            <tbody id="ticketsTable"></tbody>
+        </table>
+        <div class="pagination" id="ticketsPagination"></div>
+    </div>
+
+    <!-- TicketPassengers Table -->
+    <h3>TicketPassengers</h3>
+    <div class="table-container">
+        <div class="search-bar">
+            <input type="text" id="ticketPassengersSearch" placeholder="Tìm kiếm TicketPassengers..." onkeyup="loadTable('ticketPassengers', this.value)">
+        </div>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>TicketPassengerID</th>
+                    <th>PassengerID</th>
+                    <th>TicketID</th>
+                    <th>QRCodeData</th>
+                </tr>
+            </thead>
+            <tbody id="ticketPassengersTable"></tbody>
+        </table>
+        <div class="pagination" id="ticketPassengersPagination"></div>
+    </div>
+</div>
+
+<script>
+    const rowsPerPage = 5;
+    let currentPages = {
+        passengers: 1,
+        trains: 1,
+        tickets: 1,
+        ticketPassengers: 1
+    };
+    let totalRecords = {
+        passengers: 0,
+        trains: 0,
+        tickets: 0,
+        ticketPassengers: 0
+    };
+    let currentSearch = {
+        passengers: '',
+        trains: '',
+        tickets: '',
+        ticketPassengers: ''
+    };
+
+    // Xử lý phân trang, search
+    function loadTable(tableName, searchText = '', page = 1) {
+        const tableId = `${tableName}Table`;
+        const paginationDiv = document.getElementById(`${tableName}Pagination`);
+        currentSearch[tableName] = searchText;
+        currentPages[tableName] = page;
+
+        let url = `/api/data/${tableName}?page=${page}&pageSize=${rowsPerPage}`;
+        if (searchText) {
+            // Gửi tìm kiếm lên server (tạm thời giả lập tìm kiếm phía client)
+        }
+
+        fetch(url)
+            .then(response => response.json())
+            .then(result => {
+                const data = result.data;
+                totalRecords[tableName] = result.totalRecords;
+                let rows = '';
+
+                if (data.length === 0) {
+                    rows = `<tr><td colspan="${document.getElementById(tableId).closest('table').querySelectorAll('th').length}" class="no-data">Không có dữ liệu</td></tr>`;
+                } else {
+                    if (tableName === 'passengers') {
+                        data.forEach(item => {
+                            rows += `<tr>
+                                <td>${item.PassengerID}</td>
+                                <td>${item.FullName}</td>
+                                <td>${item.Email || ''}</td>
+                                <td>${item.PhoneNumber || ''}</td>
+                                <td>${item.IsGuest ? 'Yes' : 'No'}</td>
+                            </tr>`;
+                        });
+                    } else if (tableName === 'trains') {
+                        data.forEach(item => {
+                            rows += `<tr>
+                                <td>${item.TrainID}</td>
+                                <td>${item.TrainNumber}</td>
+                                <td>${item.TrainName}</td>
+                                <td>${item.DepartureStation}</td>
+                                <td>${item.ArrivalStation}</td>
+                                <td>${item.DepartureTime}</td>
+                                <td>${item.ArrivalTime}</td>
+                                <td>${item.TravelDate}</td>
+                                <td>${item.TicketType}</td>
+                                <td>${item.Price}</td>
+                            </tr>`;
+                        });
+                    } else if (tableName === 'tickets') {
+                        data.forEach(item => {
+                            rows += `<tr>
+                                <td>${item.TicketID}</td>
+                                <td>${item.PassengerID}</td>
+                                <td>${item.TrainID}</td>
+                                <td>${item.SeatNumber}</td>
+                            </tr>`;
+                        });
+                    } else if (tableName === 'ticketPassengers') {
+                        data.forEach(item => {
+                            rows += `<tr>
+                                <td>${item.TicketPassengerID}</td>
+                                <td>${item.PassengerID}</td>
+                                <td>${item.TicketID}</td>
+                                <td>${item.QRCodeData}</td>
+                            </tr>`;
+                        });
+                    }
+                }
+
+                document.getElementById(tableId).innerHTML = rows;
+
+                const totalPages = Math.ceil(totalRecords[tableName] / rowsPerPage);
+                let pagination = '';
+                if (totalPages > 1) {
+                    pagination += `<button onclick="loadTable('${tableName}', '${searchText}', ${page - 1})" ${page === 1 ? 'class="disabled"' : ''}>Trước</button>`;
+                    for (let i = 1; i <= totalPages; i++) {
+                        pagination += `<button onclick="loadTable('${tableName}', '${searchText}', ${i})" ${page === i ? 'style="background-color: #007bff; color: #fff;"' : ''}>${i}</button>`;
+                    }
+                    pagination += `<button onclick="loadTable('${tableName}', '${searchText}', ${page + 1})" ${page === totalPages ? 'class="disabled"' : ''}>Sau</button>`;
+                }
+                paginationDiv.innerHTML = pagination;
+            })
+            .catch(error => {
+                document.getElementById(tableId).innerHTML = `<tr><td colspan="${document.getElementById(tableId).closest('table').querySelectorAll('th').length}" class="no-data">Lỗi khi tải dữ liệu: ${error}</td></tr>`;
+            });
+    }
+
+    loadTable('passengers');
+    loadTable('trains');
+    loadTable('tickets');
+    loadTable('ticketPassengers');
+</script>

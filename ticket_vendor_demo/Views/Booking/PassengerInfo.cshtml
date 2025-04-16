@@ -1,0 +1,109 @@
+﻿@{
+    ViewBag.Title = "Chọn phương thức đặt vé";
+}
+
+<style>
+    .option-card {
+        border: 1px solid #e0e0e0;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+        background-color: #f9fafb;
+    }
+    .option-card:hover {
+        transform: translateY(-5px);
+     }
+
+    .card-body {
+        padding: 25px;
+        text-align: center;
+    }
+
+    .option-title {
+        font-size: 1.3rem;
+        font-weight: 500;
+        color: #007bff;
+        margin-bottom: 15px;
+    }
+
+    .option-description {
+        font-size: 0.95rem; 
+        color: #6c757d;
+        margin-bottom: 20px;
+        line-height: 1.5;
+    }
+
+    .btn-option {
+        font-size: 1rem;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease; 
+    }
+
+    .btn-guest {
+        background-color: #28a745;
+        border-color: #28a745;
+    }
+
+        .btn-guest:hover {
+            background-color: #218838; 
+            border-color: #1e7e34;
+        }
+
+    .btn-login {
+        background-color: #007bff;
+        border-color: #007bff;
+    }
+
+        .btn-login:hover {
+            background-color: #0056b3; 
+            border-color: #004085;
+        }
+
+    .icon {
+        margin-right: 5px;
+    }
+</style>
+
+<div class="container my-5">
+    <h2 class="mb-4 text-center">Chọn phương thức đặt vé</h2>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <div class="card option-card">
+                <div class="card-body">
+                    <h5 class="option-title">Tiếp tục với tư cách khách</h5>
+                    <p class="option-description">Đặt vé nhanh chóng mà không cần tài khoản. Bạn chỉ cần nhập thông tin cơ bản.</p>
+                    <a href="@Url.Action("Guest", "Booking")" class="btn btn-guest btn-option text-white">
+                        <i class="bi bi-person icon"></i> Tiếp tục
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-5">
+            <div class="card option-card">
+                <div class="card-body">
+                    <h5 class="option-title">Đăng nhập để tiếp tục</h5>
+                    <p class="option-description">Đăng nhập để quản lý vé dễ dàng và nhận ưu đãi dành riêng cho thành viên.</p>
+                    <a href="@Url.Action("Login", "Account")" class="btn btn-login btn-option text-white">
+                        <i class="bi bi-box-arrow-in-right icon"></i> Đăng nhập
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="@Url.Action("Index", "Train")" class="btn btn-secondary">
+            <i class="bi bi-arrow-left-circle icon"></i> Quay lại
+        </a>
+    </div>
+</div>

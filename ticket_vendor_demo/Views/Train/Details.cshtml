@@ -1,0 +1,249 @@
+﻿@model ticket_vendor_demo.Models.Train
+
+@{
+    ViewBag.Title = "Chi tiết chuyến tàu";
+    List<string> availableSeats = ViewBag.AvailableSeats;
+    bool hasAvailableSeats = availableSeats != null && availableSeats.Any();
+}
+
+<style>
+    .train-card {
+        border: none;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 20px;
+    }
+
+    .card-header {
+        background-color: #f8f9fa;
+        padding: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .train-title {
+        font-size: 1.5rem;
+        font-weight: 500;
+        color: #007bff;
+        margin: 0;
+    }
+
+    .train-frequency {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .timeline {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+    }
+
+    .station {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .station-time {
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .arrow {
+        flex: 1;
+        border-bottom: 1px solid #ccc;
+        margin: 0 10px;
+        position: relative;
+        text-align: center;
+    }
+
+    .duration {
+        font-size: 0.85rem;
+        color: #6c757d;
+        position: absolute;
+        top: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+
+    .train-info {
+        font-size: 0.9rem;
+        color: #6c757d;
+        margin-bottom: 5px;
+    }
+
+    .train-price {
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: #dc3545;
+    }
+
+    .seat-selection {
+        margin-top: 20px;
+    }
+
+    .seat-option {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 5px;
+        border-radius: 5px;
+        font-size: 0.9rem;
+        cursor: pointer;
+    }
+
+    .seat-available {
+        border: 1px solid grey;
+    }
+
+    .seat-unavailable {
+        background-color: #dc3545;
+        color: #fff;
+        cursor: not-allowed;
+    }
+
+    .seat-selected {
+        background-color: green;
+        color: #fff;
+        border: 1px solid #0056b3;
+    }
+
+    .btn-action {
+        font-size: 0.9rem;
+        padding: 8px 16px;
+    }
+
+    .icon {
+        margin-right: 5px;
+    }
+</style>
+
+<div class="container mb-4">
+    <h2 class="mb-4 text-center">Chi tiết chuyến tàu</h2>
+
+    @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    @if (Model != null)
+    {
+        // Tính thời gian hành trình
+        TimeSpan departureTime = TimeSpan.Parse(Model.DepartureTime);
+        TimeSpan arrivalTime = TimeSpan.Parse(Model.ArrivalTime);
+        TimeSpan duration = arrivalTime - departureTime;
+        string durationText;
+        if (duration < TimeSpan.Zero)
+        {
+            duration += TimeSpan.FromDays(1); // Xử lý trường hợp qua ngày
+        }
+        durationText = $"{duration.Hours} giờ";
+        if (duration.Minutes > 0)
+        {
+            durationText += $" {duration.Minutes} phút";
+        }
+
+        <div class="card train-card">
+            <div class="card-header">
+                <h5 class="train-title">@Model.TrainNumber - @Model.TrainName</h5>
+                <span class="train-frequency">Chạy hàng ngày</span>
+            </div>
+            <div class="card-body">
+                <div class="timeline">
+                    <div class="station">
+                        @Model.TravelDate<br />
+                        <span class="station-time">@Model.DepartureTime</span><br />
+                        @Model.DepartureStation
+                    </div>
+                    <div class="arrow">
+                        <span class="duration">@durationText</span>
+                    </div>
+                    <div class="station">
+                        @Model.TravelDate<br />
+                        <span class="station-time">@Model.ArrivalTime</span><br />
+                        @Model.ArrivalStation
+                    </div>
+                </div>
+                <p class="train-info">
+                    <i class="bi bi-ticket-perforated icon"></i> <strong>Loại vé:</strong> @Model.TicketType
+                </p>
+                <p class="train-price">
+                    <i class="bi bi-currency-exchange icon"></i> @Model.Price.ToString("C", new System.Globalization.CultureInfo("vi-VN"))
+                </p>
+            </div>
+        </div>
+
+        <h3 class="mt-4">Chọn ghế</h3>
+        if (hasAvailableSeats)
+        {
+            using (Html.BeginForm("SelectSeat", "Train", FormMethod.Post))
+            {
+                @Html.Hidden("trainId", Model.TrainID)
+                <div class="seat-selection">
+                    <label class="form-label">Ghế còn trống:</label>
+                    <div>
+                        @foreach (var seat in availableSeats)
+                        {
+                            <label class="seat-option seat-available" data-seat="@seat">
+                                <input type="radio" name="seatNumber" value="@seat" required style="display:none;" />
+                                @seat
+                            </label>
+                        }
+                        @{
+                            // Giả lập ghế đã đặt (dựa trên danh sách ghế cố định)
+                            List<string> allSeats = new List<string> { "A1", "A2", "A3", "A4", "B1", "B2", "B3", "B4" };
+                            var bookedSeats = allSeats.Except(availableSeats).ToList();
+                            foreach (var seat in bookedSeats)
+                            {
+                                <span class="seat-option seat-unavailable">@seat</span>
+                            }
+                        }
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary btn-action mt-3">
+                    <i class="bi bi-arrow-right-circle icon"></i> Tiếp tục
+                </button>
+            }
+        }
+        else
+        {
+            <p class="text-danger">Không còn ghế trống cho chuyến tàu này.</p>
+        }
+        <a href="@Url.Action("Index", "Train")" class="btn btn-secondary btn-action mt-3">
+            <i class="bi bi-arrow-left-circle icon"></i> Quay lại
+        </a>
+    }
+    else
+    {
+        <p class="text-center text-muted mt-4">Không tìm thấy thông tin chuyến tàu.</p>
+    }
+</div>
+
+@section scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const seatOptions = document.querySelectorAll('.seat-option.seat-available');
+            seatOptions.forEach(option => {
+                option.addEventListener('click', function () {
+                    // Xóa trạng thái "selected" từ tất cả các ghế
+                    seatOptions.forEach(opt => opt.classList.remove('seat-selected'));
+                    // Thêm trạng thái "selected" cho ghế được nhấn
+                    this.classList.add('seat-selected');
+                    // Đảm bảo input radio tương ứng được chọn
+                    const radio = this.querySelector('input[type="radio"]');
+                    if (radio) {
+                        radio.checked = true;
+                    }
+                });
+            });
+        });
+    </script>
+}
